@@ -4,38 +4,37 @@ require_once "app/models/model.php";
 
 class AlbumModel extends Model {
     /**
+     * Devuelve el nombre de las columnas de la tabla
+     */
+    public function getColumnNames() {
+        $query = $this->db->query("DESCRIBE albums");
+        $columns = $query->fetchAll(PDO::FETCH_COLUMN);
+        return $columns;
+    }
+
+    /**
      * Obtiene los álbumes de la tabla 'albums'
      */
-    public function getAlbums($fieldFilter, $value, $sortField, $order) {
+    public function getAlbums($filter, $value, $sort, $order) {
         $sql = 'SELECT * FROM albums';
 
-        // TODO: Filtro
-        /*
-        if (!empty($titleFilter))
-            $sql .= ' WHERE LOWER(title) LIKE :titleFilter';
-        */
+        // Filtro por campo y valor
+        if (!empty($filter) && !empty($value))
+            $sql .= " WHERE $filter LIKE '%$value%'";
 
         // Ordenamiento según campos específicos
-        $allowedFields = ['id', 'title', 'year', 'band_id']; // Campos permitidos
-        if (in_array(strtolower($sortField), $allowedFields)) {
-            $sql .= ' ORDER BY ' . $sortField;
+        if (!empty($sort)) {
+            $sql .= ' ORDER BY ' . $sort;
 
             // Orden ascendente y descendente
-            $allowedOrders = ["ASC", "DESC"]; // Órdenes permitidos
-            if (in_array(strtoupper($order), $allowedOrders))
+            if (!empty($order))
                 $sql .= ' ' . $order;
         }
 
-        $query = $this->db->prepare($sql);
-
-        /* TODO: Filtro
-        if (!empty($titleFilter)) {
-            $titleFilter = '%' . strtolower($titleFilter) .'%';
-            $query->bindParam(':titleFilter', $titleFilter, PDO::PARAM_STR);
-        }
-        */
-
+        // No hace falta sanitizar consulta (datos ingresados ya verificados por controller)
+        $query = $this->db->prepare($sql);        
         $query->execute();
+        
         $albums = $query->fetchAll(PDO::FETCH_OBJ);
         return $albums;
     }

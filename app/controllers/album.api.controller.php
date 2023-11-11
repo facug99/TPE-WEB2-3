@@ -4,10 +4,13 @@ require_once 'app/controllers/api.controller.php';
 require_once 'app/models/album.model.php';
 
 class AlbumAPIController extends APIController {
-    
+    private $albumModel;
+    private $bandModel;
+
     public function __construct() {
         parent::__construct();
-        $this->model = new AlbumModel();
+        $this->albumModel = new AlbumModel();
+        // $this->bandModel = new BandModel();
     }
 
     /**
@@ -22,7 +25,7 @@ class AlbumAPIController extends APIController {
 
         // TO-DO: Verificar si existe la banda
 
-        $id = $this->model->insertAlbum($title, $year, $bandId);
+        $id = $this->albumModel->insertAlbum($title, $year, $bandId);
         
         if ($id) {
             $this->view->response("Album id=$id successfully created", 201);
@@ -32,24 +35,46 @@ class AlbumAPIController extends APIController {
     }
 
     /**
-     * Devuelve un JSON con el o los álbumes, dependiendo si se recibe o no el parámetro ":id"
+     * Devuelve un JSON con los álbumes de la base de datos
      */
-    public function getAll($params = []) {
-        $filterField = $value = $sortField = $order = "";
+    public function getAll() {
+        $filter = $value = $sort = $order = ""; // Valores por defecto de query params
+        $columns = $this->albumModel->getColumnNames(); // Nombres de columnas de la tabla
 
-        /* TODO: Filtro de búsqueda por campo y valor dados
-        $fields = ['id', 'title', 'year', 'band_id'];
-        if (!empty($_GET['title'])) 
-            $filterField = $_GET['title'];
-        */
+        // Filtro
+        // Se verifica campo y valor del filtro
+        if (!empty($_GET['filter']) && !empty($_GET['value'])) {
+            $filter = strtolower($_GET['filter']);
+            $value = strtolower($_GET['value']);
+            
+            // Si el campo no existe se informa el error
+            if (!in_array($filter, $columns)) {
+                $this->view->response("Invalid filter parameter (field '$filter' does not exist)", 400);
+                return;
+            }
+        }
 
         // Ordenamiento por un campo dado
         if (!empty($_GET['sort'])) {
-            $sortField = $_GET['sort'];
+            $sort = strtolower($_GET['sort']);
+
+            // Si el campo de ordenamiento no existe se informa el error
+            if (!in_array($sort, $columns)) {
+                $this->view->response("Invalid sort parameter (field '$sort' does not exist)", 400);
+                return;
+            }    
 
             // Orden ascendente o descendente
-            if (!empty($_GET['order']))
-                $order = $_GET['order'];
+            if (!empty($_GET['order'])) {
+                $order = strtoupper($_GET['order']);
+                $allowedOrders = ['ASC', 'DESC'];
+
+                // Si el campo de ordenamiento no existe se informa el error
+                if (!in_array($order, $allowedOrders)) {
+                    $this->view->response("Invalid order parameter (only 'ASC' or 'DESC' allowed)", 400);
+                    return;
+                }
+            }
         }
 
         /* TODO: paginación
@@ -59,7 +84,7 @@ class AlbumAPIController extends APIController {
         }
         */
 
-        $albums = $this->model->getAlbums($filterField, $value, $sortField, $order);
+        $albums = $this->albumModel->getAlbums($filter, $value, $sort, $order);
         return $this->view->response($albums, 200);
     }
 
@@ -68,7 +93,7 @@ class AlbumAPIController extends APIController {
      */
     public function get($params = []) {
         $id = $params[':id'];
-        $album = $this->model->getAlbumById($id);
+        $album = $this->albumModel->getAlbumById($id);
         if (!empty($album))
             return $this->view->response($album, 200);
         else 
@@ -85,7 +110,7 @@ class AlbumAPIController extends APIController {
         }
 
         $id = $params[':id'];
-        $album = $this->model->getAlbumById($id);
+        $album = $this->albumModel->getAlbumById($id);
 
         if ($album) {
             $body = $this->getData();
@@ -95,7 +120,7 @@ class AlbumAPIController extends APIController {
             
             // TO-DO verificar si pudo modificarse el álbum en la DB
 
-            $this->model->editAlbum($id, $title, $year, $bandId);
+            $this->albumModel->editAlbum($id, $title, $year, $bandId);
             $this->view->response("Album id=$id successfully modified", 200);
         } else 
             $this->view->response("Album id=$id not found", 404);
@@ -111,10 +136,10 @@ class AlbumAPIController extends APIController {
         }
 
         $id = $params[':id'];
-        $album = $this->model->getAlbumById($id);
+        $album = $this->albumModel->getAlbumById($id);
 
         if ($album) {
-            $this->model->deleteAlbum($id);
+            $this->albumModel->deleteAlbum($id);
             $this->view->response("Album id=$id deleted", 200);            
         } else
             $this->view->response("Album id=$id not found", 404);

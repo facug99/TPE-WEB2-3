@@ -3,7 +3,6 @@
 require_once 'app/views/api.view.php';
 
 abstract class APIController {
-    protected $model;
     protected $view;
     private $data;
 
