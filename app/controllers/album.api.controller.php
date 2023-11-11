@@ -13,7 +13,7 @@ class AlbumAPIController extends APIController {
     /**
      * Crea un álbum con los atributos pasados por JSON
      */
-    public function create($params = []) {
+    public function create() {
         $body = $this->getData();
 
         $title = $body->title;
@@ -34,33 +34,45 @@ class AlbumAPIController extends APIController {
     /**
      * Devuelve un JSON con el o los álbumes, dependiendo si se recibe o no el parámetro ":id"
      */
-    public function get($params = []) {
-        if(empty($params)) {
-            $filter = $sortField = $order = "";
+    public function getAll($params = []) {
+        $filterField = $value = $sortField = $order = "";
 
-            // Filtro de búsqueda por título
-            if (!empty($_GET['title']))
-                $filter = $_GET['title'];
+        /* TODO: Filtro de búsqueda por campo y valor dados
+        $fields = ['id', 'title', 'year', 'band_id'];
+        if (!empty($_GET['title'])) 
+            $filterField = $_GET['title'];
+        */
 
-            // Ordenamiento por un campo dado
-            if (!empty($_GET['sort'])) {
-                $sortField = $_GET['sort'];
+        // Ordenamiento por un campo dado
+        if (!empty($_GET['sort'])) {
+            $sortField = $_GET['sort'];
 
-                // Orden ascendente o descendente
-                if (!empty($_GET['order']))
-                    $order = $_GET['order'];
-            }
-
-            $albums = $this->model->getAlbums($filter, $sortField, $order);
-            return $this->view->response($albums, 200);
-        } else {
-            $id = $params[':id'];
-            $album = $this->model->getAlbumById($id);
-            if (!empty($album))
-                return $this->view->response($album, 200);
-            else 
-                return $this->view->response("Album id=$id not found", 404);
+            // Orden ascendente o descendente
+            if (!empty($_GET['order']))
+                $order = $_GET['order'];
         }
+
+        /* TODO: paginación
+        if (!empty($_GET['page'] && !empty($_GET['page_size']))) {
+            $page = $_GET['page'];
+            $page_size = $_GET['page_size'];
+        }
+        */
+
+        $albums = $this->model->getAlbums($filterField, $value, $sortField, $order);
+        return $this->view->response($albums, 200);
+    }
+
+    /**
+     * Devuelve un JSON de un álbum con ID específico
+     */
+    public function get($params = []) {
+        $id = $params[':id'];
+        $album = $this->model->getAlbumById($id);
+        if (!empty($album))
+            return $this->view->response($album, 200);
+        else 
+            return $this->view->response("Album id=$id not found", 404);
     }
 
     /**
@@ -68,9 +80,7 @@ class AlbumAPIController extends APIController {
      */
     public function update($params = []) {
         if (empty($params)) {
-            $this->view->response("Album not specified", 404);
-            var_dump($params);
-            die();
+            $this->view->response("Album not specified", 400);
             return;
         }
 
@@ -95,6 +105,11 @@ class AlbumAPIController extends APIController {
      * Elimina un álbum según un ID pasado por parámetro
      */
     public function delete($params = []) {
+        if (empty($params)) {
+            $this->view->response("Album not specified", 400);
+            return;
+        }
+
         $id = $params[':id'];
         $album = $this->model->getAlbumById($id);
 

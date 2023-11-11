@@ -1,7 +1,7 @@
 "use strict";
 
 let albumList = document.querySelector("#album-list");
-const URL = "http://localhost/web2/tpe-parte3/api/albums/";
+const URL = "http://localhost/web2/TPE-WEB2-3/api/albums/";
 
 getAlbums();
 

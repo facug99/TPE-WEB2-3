@@ -18,6 +18,7 @@ class APIView {
         $status = array(
             200 => 'OK',
             201 => 'Created',
+            400 => 'Bad Request',
             422 => 'Unprocessable Entity',
             404 => 'Not found',
             500 => 'Internal Server Error'

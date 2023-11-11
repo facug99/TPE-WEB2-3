@@ -6,12 +6,14 @@ class AlbumModel extends Model {
     /**
      * Obtiene los álbumes de la tabla 'albums'
      */
-    public function getAlbums($titleFilter, $sortField, $order) {
+    public function getAlbums($fieldFilter, $value, $sortField, $order) {
         $sql = 'SELECT * FROM albums';
 
-        // Filtro de búsqueda por título
+        // TODO: Filtro
+        /*
         if (!empty($titleFilter))
             $sql .= ' WHERE LOWER(title) LIKE :titleFilter';
+        */
 
         // Ordenamiento según campos específicos
         $allowedFields = ['id', 'title', 'year', 'band_id']; // Campos permitidos
@@ -26,10 +28,12 @@ class AlbumModel extends Model {
 
         $query = $this->db->prepare($sql);
 
+        /* TODO: Filtro
         if (!empty($titleFilter)) {
             $titleFilter = '%' . strtolower($titleFilter) .'%';
             $query->bindParam(':titleFilter', $titleFilter, PDO::PARAM_STR);
         }
+        */
 
         $query->execute();
         $albums = $query->fetchAll(PDO::FETCH_OBJ);
