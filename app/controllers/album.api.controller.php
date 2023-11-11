@@ -55,7 +55,7 @@ class AlbumAPIController extends APIController {
             }
         }
 
-        // Ordenamiento por un campo dado
+        // Ordenamiento
         $sort = $order = ""; // Valores por defecto
 
         if (!empty($_GET['sort'])) {
@@ -87,6 +87,7 @@ class AlbumAPIController extends APIController {
             $page = $_GET['page'];
             $limit = $_GET['limit'];
 
+            // Si alguno de los valores no es numérico se informa el error
             if (!is_numeric($page) || !is_numeric($limit)) {
                 $this->view->response("Page and limit parameters must be numeric", 400);
                 return;
@@ -95,7 +96,7 @@ class AlbumAPIController extends APIController {
             $offset = ($page - 1) * $limit;
         }
 
-        // Se obtienen los álbumes y se devuelven
+        // Se obtienen los álbumes y se devuelven en formato JSON
         $albums = $this->albumModel->getAlbums($filter, $value, $sort, $order, $limit, $offset);
         return $this->view->response($albums, 200);
     }

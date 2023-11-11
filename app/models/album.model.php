@@ -32,9 +32,8 @@ class AlbumModel extends Model {
         }
 
         // Paginación
-        if (!empty($limit)) {
+        if (!empty($limit))
             $sql .= " LIMIT $limit OFFSET $offset";
-        }
 
         // No hace falta sanitizar consulta (datos ingresados ya fueron verificados por controller)
         $query = $this->db->prepare($sql);        
