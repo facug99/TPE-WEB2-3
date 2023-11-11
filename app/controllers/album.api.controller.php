@@ -38,11 +38,12 @@ class AlbumAPIController extends APIController {
      * Devuelve un JSON con los álbumes de la base de datos
      */
     public function getAll() {
-        $filter = $value = $sort = $order = ""; // Valores por defecto de query params
-        $columns = $this->albumModel->getColumnNames(); // Nombres de columnas de la tabla
-
+        // Se obtienen nombres de columnas de la tabla para futuras verificaciones
+        $columns = $this->albumModel->getColumnNames();
+        
         // Filtro
-        // Se verifica campo y valor del filtro
+        $filter = $value = ""; // Valores por defecto
+
         if (!empty($_GET['filter']) && !empty($_GET['value'])) {
             $filter = strtolower($_GET['filter']);
             $value = strtolower($_GET['value']);
@@ -55,6 +56,8 @@ class AlbumAPIController extends APIController {
         }
 
         // Ordenamiento por un campo dado
+        $sort = $order = ""; // Valores por defecto
+
         if (!empty($_GET['sort'])) {
             $sort = strtolower($_GET['sort']);
 
@@ -77,14 +80,23 @@ class AlbumAPIController extends APIController {
             }
         }
 
-        /* TODO: paginación
-        if (!empty($_GET['page'] && !empty($_GET['page_size']))) {
-            $page = $_GET['page'];
-            $page_size = $_GET['page_size'];
-        }
-        */
+        // Paginación
+        $page = $limit = $offset = 0; // Valores por defecto
 
-        $albums = $this->albumModel->getAlbums($filter, $value, $sort, $order);
+        if (!empty($_GET['page']) && !empty($_GET['limit'])) {
+            $page = $_GET['page'];
+            $limit = $_GET['limit'];
+
+            if (!is_numeric($page) || !is_numeric($limit)) {
+                $this->view->response("Page and limit parameters must be numeric", 400);
+                return;
+            }
+            
+            $offset = ($page - 1) * $limit;
+        }
+
+        // Se obtienen los álbumes y se devuelven
+        $albums = $this->albumModel->getAlbums($filter, $value, $sort, $order, $limit, $offset);
         return $this->view->response($albums, 200);
     }
 

@@ -15,26 +15,31 @@ class AlbumModel extends Model {
     /**
      * Obtiene los álbumes de la tabla 'albums'
      */
-    public function getAlbums($filter, $value, $sort, $order) {
-        $sql = 'SELECT * FROM albums';
+    public function getAlbums($filter, $value, $sort, $order, $limit, $offset) {
+        $sql = "SELECT * FROM albums";
 
-        // Filtro por campo y valor
+        // Filtro
         if (!empty($filter) && !empty($value))
             $sql .= " WHERE $filter LIKE '%$value%'";
 
-        // Ordenamiento según campos específicos
+        // Ordenamiento
         if (!empty($sort)) {
-            $sql .= ' ORDER BY ' . $sort;
+            $sql .= " ORDER BY $sort";
 
             // Orden ascendente y descendente
             if (!empty($order))
-                $sql .= ' ' . $order;
+                $sql .= " $order";
         }
 
-        // No hace falta sanitizar consulta (datos ingresados ya verificados por controller)
+        // Paginación
+        if (!empty($limit)) {
+            $sql .= " LIMIT $limit OFFSET $offset";
+        }
+
+        // No hace falta sanitizar consulta (datos ingresados ya fueron verificados por controller)
         $query = $this->db->prepare($sql);        
         $query->execute();
-        
+
         $albums = $query->fetchAll(PDO::FETCH_OBJ);
         return $albums;
     }
