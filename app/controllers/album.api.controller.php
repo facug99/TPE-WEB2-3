@@ -2,14 +2,17 @@
 
 require_once 'app/controllers/api.controller.php';
 require_once 'app/models/album.model.php';
+require_once 'app/helpers/auth.api.helper.php';
 
 class AlbumAPIController extends APIController {
     private $albumModel;
     private $bandModel;
+    private $authHelper;
 
     public function __construct() {
         parent::__construct();
         $this->albumModel = new AlbumModel();
+        $this->authHelper = new AuthHelper();
         // $this->bandModel = new BandModel();
     }
 
@@ -17,12 +20,18 @@ class AlbumAPIController extends APIController {
      * Crea un álbum con los atributos pasados por JSON
      */
     public function create() {
+        $user = $this->authHelper->currentUser();
+            if(!$user) {
+                $this->view->response('Unauthorized', 401);
+                return;
+            }
+
         $body = $this->getData();
 
         $title = $body->title;
         $year = $body->year;
         $bandId = $body->band_id;
-
+        
         // TO-DO: Verificar si existe la banda
 
         $id = $this->albumModel->insertAlbum($title, $year, $bandId);
@@ -117,6 +126,12 @@ class AlbumAPIController extends APIController {
      * Actualiza un álbum dado
      */
     public function update($params = []) {
+        $user = $this->authHelper->currentUser();
+            if(!$user) {
+                $this->view->response('Unauthorized', 401);
+                return;
+            }
+
         if (empty($params)) {
             $this->view->response("Album not specified", 400);
             return;

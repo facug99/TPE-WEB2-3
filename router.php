@@ -3,6 +3,7 @@
 require_once 'libs/router.php'; // Se importa el router avanzado
 require_once 'config.php';
 require_once 'app/controllers/album.api.controller.php';
+require_once 'app/controllers/user.api.controller.php';
 
 // Se instancia el router
 $router = new Router();
@@ -16,7 +17,7 @@ $router->addRoute('albums', 'DELETE', 'AlbumApiController', 'delete');
 $router->addRoute('albums/:id', 'GET', 'AlbumApiController', 'get');
 $router->addRoute('albums/:id', 'PUT', 'AlbumApiController', 'update');
 $router->addRoute('albums/:id', 'DELETE', 'AlbumApiController', 'delete');
-
+$router->addRoute('user/token', 'GET', 'UserApiController', 'getToken');
 
 // Se rutea
 $router->route($_GET['resource'], $_SERVER['REQUEST_METHOD']);

@@ -2,14 +2,17 @@
 
 require_once 'app/controllers/api.controller.php';
 require_once 'app/models/user.model.php';
+require_once 'app/helpers/auth.api.helper.php';
 
 
 class UserApiController extends APIController{
         private $model;
+        private $authHelper;
 
-        public __construct(){
+        public function __construct(){
             parent::__construct();
             $this->model = new UserModel();
+            $this->authHelper = new AuthHelper();
         }
 
         function getToken($params = []){
@@ -28,7 +31,19 @@ class UserApiController extends APIController{
 
             $user= $userpass[0];
             $password= $userpass[1];
-            if($)
+
+            $userdata = $this->model->getUserByUsername($user);
+            $userlog = $userdata->username;
+            $userlogpass = $userdata->password;
+           
+
+            if($user == $userlog && $password == $userlogpass ) {
+                $token = $this->authHelper->createToken($userdata);
+                $this->view->response($token);
+            } else {
+                $this->view->response('El usuario o contraseña son incorrectos.', 401);
+            }
+
         }
 
 
