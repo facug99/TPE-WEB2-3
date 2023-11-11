@@ -50,68 +50,25 @@ class AlbumAPIController extends APIController {
         // Se obtienen nombres de columnas de la tabla para futuras verificaciones
         $columns = $this->albumModel->getColumnNames();
         
-        // Filtro
-        $filter = $value = ""; // Valores por defecto
+        // Arreglo donde se almacenarán los parámetros de consulta
+        $queryParams = array();
 
-        if (!empty($_GET['filter']) && !empty($_GET['value'])) {
-            $filter = strtolower($_GET['filter']);
-            $value = strtolower($_GET['value']);
-            
-            // Si el campo no existe se informa el error
-            if (!in_array($filter, $columns)) {
-                $this->view->response("Invalid filter parameter (field '$filter' does not exist)", 400);
-                return;
-            }
-        }
+        // Filtro
+        $queryParams += $this->handleFilter($columns);
 
         // Ordenamiento
-        $sort = $order = ""; // Valores por defecto
-
-        if (!empty($_GET['sort'])) {
-            $sort = strtolower($_GET['sort']);
-
-            // Si el campo de ordenamiento no existe se informa el error
-            if (!in_array($sort, $columns)) {
-                $this->view->response("Invalid sort parameter (field '$sort' does not exist)", 400);
-                return;
-            }    
-
-            // Orden ascendente o descendente
-            if (!empty($_GET['order'])) {
-                $order = strtoupper($_GET['order']);
-                $allowedOrders = ['ASC', 'DESC'];
-
-                // Si el campo de ordenamiento no existe se informa el error
-                if (!in_array($order, $allowedOrders)) {
-                    $this->view->response("Invalid order parameter (only 'ASC' or 'DESC' allowed)", 400);
-                    return;
-                }
-            }
-        }
+        $queryParams += $this->handleSort($columns);
 
         // Paginación
-        $page = $limit = $offset = 0; // Valores por defecto
-
-        if (!empty($_GET['page']) && !empty($_GET['limit'])) {
-            $page = $_GET['page'];
-            $limit = $_GET['limit'];
-
-            // Si alguno de los valores no es numérico se informa el error
-            if (!is_numeric($page) || !is_numeric($limit)) {
-                $this->view->response("Page and limit parameters must be numeric", 400);
-                return;
-            }
-            
-            $offset = ($page - 1) * $limit;
-        }
+        $queryParams += $this->handlePagination();
 
         // Se obtienen los álbumes y se devuelven en formato JSON
-        $albums = $this->albumModel->getAlbums($filter, $value, $sort, $order, $limit, $offset);
+        $albums = $this->albumModel->getAlbums($queryParams);
         return $this->view->response($albums, 200);
     }
 
     /**
-     * Devuelve un JSON de un álbum con ID específico
+     * Devuelve el JSON de un álbum con ID específico
      */
     public function get($params = []) {
         $id = $params[':id'];
@@ -123,7 +80,7 @@ class AlbumAPIController extends APIController {
     }
 
     /**
-     * Actualiza un álbum dado
+     * Se modifica un álbum dado su ID
      */
     public function update($params = []) {
         $user = $this->authHelper->currentUser();
@@ -155,7 +112,7 @@ class AlbumAPIController extends APIController {
     }
 
     /**
-     * Elimina un álbum según un ID pasado por parámetro
+     * Elimina un álbum dado su ID
      */
     public function delete($params = []) {
         if (empty($params)) {
@@ -171,5 +128,99 @@ class AlbumAPIController extends APIController {
             $this->view->response("Album id=$id deleted", 200);            
         } else
             $this->view->response("Album id=$id not found", 404);
+    }
+
+    /**
+     * Método de filtrado de resultados según campo y valor dados
+     */
+    private function handleFilter($columns) {
+        // Valores por defecto
+        $filterData = [
+            'filter' => "", // Campo de filtrado
+            'value' => ""   // Valor de filtrado
+        ];
+    
+        if (!empty($_GET['filter']) && !empty($_GET['value'])) {
+            $filter = strtolower($_GET['filter']);
+            $value = strtolower($_GET['value']);
+            
+            // Si el campo no existe se produce un error
+            if (!in_array($filter, $columns)) {
+                $this->view->response("Invalid filter parameter (field '$filter' does not exist)", 400);
+                die();
+            }
+
+            $filterData['filter'] = $filter;
+            $filterData['value'] = $value;
+        }
+    
+        return $filterData;
+    }
+
+    /**
+     * Método de ordenamiento de resultados según campo y orden dados
+     */
+    private function handleSort($columns) {
+        // Valores por defecto
+        $sortData = [
+            'sort' => "", // Campo de ordenamiento
+            'order' => "" // Orden ascendente o descendente
+        ];
+    
+        if (!empty($_GET['sort'])) {
+            $sort = strtolower($_GET['sort']);
+    
+            // Si el campo de ordenamiento no existe se produce un error
+            if (!in_array($sort, $columns)) {
+                $this->view->response("Invalid sort parameter (field '$sort' does not exist)", 400);
+                die();
+            }    
+    
+            // Orden ascendente o descendente
+            if (!empty($_GET['order'])) {
+                $order = strtoupper($_GET['order']);
+                $allowedOrders = ['ASC', 'DESC'];
+    
+                // Si el campo de ordenamiento no existe se produce un error
+                if (!in_array($order, $allowedOrders)) {
+                    $this->view->response("Invalid order parameter (only 'ASC' or 'DESC' allowed)", 400);
+                    die();
+                }
+            }
+    
+            $sortData['sort'] = $sort;
+            $sortData['order'] = $order;
+        }
+    
+        return $sortData;
+    }
+
+    /**
+     * Método de paginación de resultados según número de página y límite dados
+     */
+    private function handlePagination() {
+        // Valores por defecto
+        $paginationData = [
+            'limit' => 0,    // Límite de resultados
+            'offset' => 0    // Desplazamiento
+        ];
+    
+        if (!empty($_GET['page']) && !empty($_GET['limit'])) {
+            $page = $_GET['page'];
+            $limit = $_GET['limit'];
+    
+            // Si alguno de los valores no es un número natural se produce un error
+            if (!is_numeric($page) || $page < 0 || !is_numeric($limit) || $limit < 0) {
+                $this->view->response("Page and limit parameters must be positive integers", 400);
+                die();
+            }
+            
+            $offset = ($page - 1) * $limit;
+    
+            $paginationData['limit'] = $limit;
+            $paginationData['offset'] = $offset;
+        }
+    
+        return $paginationData;
     }
 }

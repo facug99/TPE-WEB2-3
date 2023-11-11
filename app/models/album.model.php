@@ -15,27 +15,27 @@ class AlbumModel extends Model {
     /**
      * Obtiene los álbumes de la tabla 'albums'
      */
-    public function getAlbums($filter, $value, $sort, $order, $limit, $offset) {
+    public function getAlbums($queryParams) {
         $sql = "SELECT * FROM albums";
 
         // Filtro
-        if (!empty($filter) && !empty($value))
-            $sql .= " WHERE $filter LIKE '%$value%'";
+        if (!empty($queryParams['filter']) && !empty($queryParams['value']))
+            $sql .= ' WHERE ' . $queryParams['filter'] . ' LIKE \'%' . $queryParams['value'] . '%\'';
 
         // Ordenamiento
-        if (!empty($sort)) {
-            $sql .= " ORDER BY $sort";
+        if (!empty($queryParams['sort'])) {
+            $sql .= ' ORDER BY '. $queryParams['sort'];
 
             // Orden ascendente y descendente
-            if (!empty($order))
-                $sql .= " $order";
+            if (!empty($queryParams['order']))
+                $sql .= ' ' . $queryParams['order'];
         }
 
         // Paginación
-        if (!empty($limit))
-            $sql .= " LIMIT $limit OFFSET $offset";
+        if (!empty($queryParams['limit']))
+            $sql .= ' LIMIT ' . $queryParams['limit'] . ' OFFSET ' . $queryParams['offset'];
 
-        // No hace falta sanitizar consulta (datos ingresados ya fueron verificados por controller)
+        // No hace falta sanitizar consulta (datos ingresados ya fueron verificados por el controlador)
         $query = $this->db->prepare($sql);        
         $query->execute();
 
