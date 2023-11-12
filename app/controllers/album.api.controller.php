@@ -12,8 +12,8 @@ class AlbumAPIController extends APIController {
     public function __construct() {
         parent::__construct();
         $this->albumModel = new AlbumModel();
-        $this->authHelper = new AuthHelper();
         // $this->bandModel = new BandModel();
+        $this->authHelper = new AuthHelper();
     }
 
     /**
@@ -21,21 +21,22 @@ class AlbumAPIController extends APIController {
      */
     public function create() {
         $user = $this->authHelper->currentUser();
-            if(!$user) {
-                $this->view->response('Unauthorized', 401);
-                return;
-            }
+        
+        if (!$user) {
+            $this->view->response('Unauthorized', 401);
+            return;
+        }
 
         $body = $this->getData();
 
         $title = $body->title;
         $year = $body->year;
         $bandId = $body->band_id;
-        
+
         // TO-DO: Verificar si existe la banda
 
         $id = $this->albumModel->insertAlbum($title, $year, $bandId);
-        
+
         if ($id) {
             $this->view->response("Album id=$id successfully created", 201);
         } else {
@@ -49,7 +50,7 @@ class AlbumAPIController extends APIController {
     public function getAll() {
         // Se obtienen nombres de columnas de la tabla para futuras verificaciones
         $columns = $this->albumModel->getColumnNames();
-        
+
         // Arreglo donde se almacenarán los parámetros de consulta
         $queryParams = array();
 
@@ -75,7 +76,7 @@ class AlbumAPIController extends APIController {
         $album = $this->albumModel->getAlbumById($id);
         if (!empty($album))
             return $this->view->response($album, 200);
-        else 
+        else
             return $this->view->response("Album id=$id not found", 404);
     }
 
@@ -84,10 +85,11 @@ class AlbumAPIController extends APIController {
      */
     public function update($params = []) {
         $user = $this->authHelper->currentUser();
-            if(!$user) {
-                $this->view->response('Unauthorized', 401);
-                return;
-            }
+        
+        if (!$user) {
+            $this->view->response('Unauthorized', 401);
+            return;
+        }
 
         if (empty($params)) {
             $this->view->response("Album not specified", 400);
@@ -102,12 +104,12 @@ class AlbumAPIController extends APIController {
             $title = $body->title;
             $year = $body->year;
             $bandId = $body->band_id;
-            
+
             // TO-DO verificar si pudo modificarse el álbum en la DB
 
             $this->albumModel->editAlbum($id, $title, $year, $bandId);
             $this->view->response("Album id=$id successfully modified", 200);
-        } else 
+        } else
             $this->view->response("Album id=$id not found", 404);
     }
 
@@ -125,7 +127,7 @@ class AlbumAPIController extends APIController {
 
         if ($album) {
             $this->albumModel->deleteAlbum($id);
-            $this->view->response("Album id=$id deleted", 200);            
+            $this->view->response("Album id=$id deleted", 200);
         } else
             $this->view->response("Album id=$id not found", 404);
     }
@@ -139,11 +141,11 @@ class AlbumAPIController extends APIController {
             'filter' => "", // Campo de filtrado
             'value' => ""   // Valor de filtrado
         ];
-    
+
         if (!empty($_GET['filter']) && !empty($_GET['value'])) {
             $filter = strtolower($_GET['filter']);
             $value = strtolower($_GET['value']);
-            
+
             // Si el campo no existe se produce un error
             if (!in_array($filter, $columns)) {
                 $this->view->response("Invalid filter parameter (field '$filter' does not exist)", 400);
@@ -153,7 +155,7 @@ class AlbumAPIController extends APIController {
             $filterData['filter'] = $filter;
             $filterData['value'] = $value;
         }
-    
+
         return $filterData;
     }
 
@@ -166,32 +168,32 @@ class AlbumAPIController extends APIController {
             'sort' => "", // Campo de ordenamiento
             'order' => "" // Orden ascendente o descendente
         ];
-    
+
         if (!empty($_GET['sort'])) {
             $sort = strtolower($_GET['sort']);
-    
+
             // Si el campo de ordenamiento no existe se produce un error
             if (!in_array($sort, $columns)) {
                 $this->view->response("Invalid sort parameter (field '$sort' does not exist)", 400);
                 die();
-            }    
-    
+            }
+
             // Orden ascendente o descendente
             if (!empty($_GET['order'])) {
                 $order = strtoupper($_GET['order']);
                 $allowedOrders = ['ASC', 'DESC'];
-    
+
                 // Si el campo de ordenamiento no existe se produce un error
                 if (!in_array($order, $allowedOrders)) {
                     $this->view->response("Invalid order parameter (only 'ASC' or 'DESC' allowed)", 400);
                     die();
                 }
             }
-    
+
             $sortData['sort'] = $sort;
             $sortData['order'] = $order;
         }
-    
+
         return $sortData;
     }
 
@@ -204,23 +206,23 @@ class AlbumAPIController extends APIController {
             'limit' => 0,    // Límite de resultados
             'offset' => 0    // Desplazamiento
         ];
-    
+
         if (!empty($_GET['page']) && !empty($_GET['limit'])) {
             $page = $_GET['page'];
             $limit = $_GET['limit'];
-    
+
             // Si alguno de los valores no es un número natural se produce un error
             if (!is_numeric($page) || $page < 0 || !is_numeric($limit) || $limit < 0) {
                 $this->view->response("Page and limit parameters must be positive integers", 400);
                 die();
             }
-            
+
             $offset = ($page - 1) * $limit;
-    
+
             $paginationData['limit'] = $limit;
             $paginationData['offset'] = $offset;
         }
-    
+
         return $paginationData;
     }
 }
