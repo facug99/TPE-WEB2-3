@@ -1,6 +1,6 @@
 <?php
 
-require_once 'libs/router.php'; // Se importa el router avanzado
+require_once 'libs/router.php'; // Router avanzado
 require_once 'config.php';
 require_once 'app/controllers/album.api.controller.php';
 require_once 'app/controllers/user.api.controller.php';
