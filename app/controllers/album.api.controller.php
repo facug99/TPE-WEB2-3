@@ -23,13 +23,11 @@ class AlbumAPIController extends APIController {
         $body = $this->getData();
 
         $user = $this->authHelper->currentUser();
-            
-            if(!$user) {
-                $this->view->response('Unauthorized', 401);
-                return;
-            }
 
-        
+        if (!$user) {
+            $this->view->response('Unauthorized', 401);
+            return;
+        }
 
         $title = $body->title;
         $year = $body->year;
@@ -39,11 +37,10 @@ class AlbumAPIController extends APIController {
 
         $id = $this->albumModel->insertAlbum($title, $year, $bandId);
 
-        if ($id) {
+        if ($id)
             $this->view->response("Album id=$id successfully created", 201);
-        } else {
+        else
             $this->view->response("Album id=$id could not be created", 422);
-        }
     }
 
     /**
@@ -76,6 +73,7 @@ class AlbumAPIController extends APIController {
     public function get($params = []) {
         $id = $params[':id'];
         $album = $this->albumModel->getAlbumById($id);
+ 
         if (!empty($album))
             return $this->view->response($album, 200);
         else
@@ -87,7 +85,8 @@ class AlbumAPIController extends APIController {
      */
     public function update($params = []) {
         $user = $this->authHelper->currentUser();
-        if(!$user) {
+
+        if (!$user) {
             $this->view->response('Unauthorized', 401);
             return;
         }
