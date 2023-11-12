@@ -20,13 +20,16 @@ class AlbumAPIController extends APIController {
      * Crea un álbum con los atributos pasados por JSON
      */
     public function create() {
+        $body = $this->getData();
+
         $user = $this->authHelper->currentUser();
+            
             if(!$user) {
                 $this->view->response('Unauthorized', 401);
                 return;
             }
 
-        $body = $this->getData();
+        
 
         $title = $body->title;
         $year = $body->year;
@@ -84,10 +87,10 @@ class AlbumAPIController extends APIController {
      */
     public function update($params = []) {
         $user = $this->authHelper->currentUser();
-            if(!$user) {
-                $this->view->response('Unauthorized', 401);
-                return;
-            }
+        if(!$user) {
+            $this->view->response('Unauthorized', 401);
+            return;
+        }
 
         if (empty($params)) {
             $this->view->response("Album not specified", 400);

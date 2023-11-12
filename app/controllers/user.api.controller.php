@@ -20,29 +20,32 @@ class UserApiController extends APIController{
 
             if(empty($basic)){
                 $this->view->response("No envio encabezados", 401);
+                return;
             }
+
             $basic = explode(" ",$basic);
             if($basic[0]!="Basic"){
                 $this->view->response("Los encabezados de autenticacion son incorrectos", 401);
                 return;
             }
-            $userpass = base64_decode($basic[1]);
-            $userpass =explode(":", $userpass);
+                $userpass = base64_decode($basic[1]);
+                $userpass =explode(":", $userpass);
 
-            $user= $userpass[0];
-            $password= $userpass[1];
+                $user= $userpass[0];
+                $password= $userpass[1];
 
-            $userdata = $this->model->getUserByUsername($user);
-            $userlog = $userdata->username;
-            $userlogpass = $userdata->password;
+                $userdata = $this->model->getUserByUsername($user);
+                $userlog = $userdata->username;
+                $userlogpass = $userdata->password;
            
 
-            if($user == $userlog && $password == $userlogpass ) {
-                $token = $this->authHelper->createToken($userdata);
-                $this->view->response($token);
-            } else {
-                $this->view->response('El usuario o contraseña son incorrectos.', 401);
-            }
+                if($user == $userlog && $password == $userlogpass ) {
+                    $token = $this->authHelper->createToken($userdata);
+                    $this->view->response($token);
+                }else {
+                        $this->view->response('El usuario o contraseña son incorrectos.', 401);
+                }
+            
 
         }
 

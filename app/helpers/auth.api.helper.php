@@ -20,6 +20,7 @@
                 'alg' => 'HS256',
                 'typ' => 'JWT'
             );
+            $payload->exp = time() + JWT_EXP;
         
             $header = base64url_encode(json_encode($header));
             $payload = base64url_encode(json_encode($payload));
@@ -48,6 +49,10 @@
             }
 
             $payload = json_decode(base64_decode($payload));
+            
+            if($payload->exp<time()) {
+                return false;
+            }
 
             return $payload;
         }
