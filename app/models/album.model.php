@@ -31,7 +31,7 @@ class AlbumModel extends Model {
 
         // Filtro
         if (!empty($queryParams['filter']) && !empty($queryParams['value']))
-            $sql .= ' WHERE ' . $queryParams['filter'] . ' LIKE \'%' . $queryParams['value'] . '%\'';
+            $sql .= ' WHERE ' . $queryParams['filter'] . ' LIKE :value';
 
         // Ordenamiento
         if (!empty($queryParams['sort'])) {
@@ -46,8 +46,16 @@ class AlbumModel extends Model {
         if (!empty($queryParams['limit']))
             $sql .= ' LIMIT ' . $queryParams['limit'] . ' OFFSET ' . $queryParams['offset'];
 
-        // No hace falta sanitizar consulta (datos ingresados ya fueron verificados por el controlador)
+        
         $query = $this->db->prepare($sql);        
+
+        // Se sanitiza el valor del filtro (queryParams['value']). 
+        // Los otros datos fueron verificados por el controller
+        if (!empty($queryParams['value'])) {
+            $value = '%' . $queryParams['value'] . '%';
+            $query->bindParam(':value', $value, PDO::PARAM_STR);
+        }
+
         $query->execute();
 
         $albums = $query->fetchAll(PDO::FETCH_OBJ);

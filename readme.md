@@ -23,7 +23,7 @@ La información de los álbumes, presentada en formato JSON, incluye:
 ---
 
 ## Base URL
-La URL base para acceder a la API es: `localhost/web2/TPE-WEB2-3/api/`
+La URL base para acceder a la API es: `.../TPE-WEB2-3/api/`
 
 ---
 
@@ -158,6 +158,14 @@ GET localhost/web2/TPE-WEB2-3/api/albums?page=2&limit=3
 ]
 ```
 
+##### Combinación de parámetros de consulta
+Es posible combinar los parámetros de filtrado, ordenamiento o paginación.
+
+**Ejemplo:**
+```
+GET localhost/web2/TPE-WEB2-3/api/albums?filter=title&value=rock&sort=year&order=desc&page=2&limit=5
+```
+
 ##### Errores de consulta
 Si un parámetro se escribe incorrectamente se produce un error 400 (Bad Request) junto con un mensaje descriptivo en el cuerpo de la respuesta.
 
@@ -208,7 +216,7 @@ localhost/web2/TPE-WEB2-3/api/albums/1000
 Es posible crear un álbum mediante el endpoint  `POST /albums`.
 
 Consideraciones:
-- Para crear un álbum se debe poseer un token de autenticación, o se producirá un error 401 (Unauthorized).
+- Para crear un álbum se debe poseer un token de autenticación (leer sección 'Autenticación y tokens'), o se producirá un error 401 (Unauthorized).
 - Si el álbum se crea correctamente, se muestra un código 201 (Created) y un mensaje descriptivo en el cuerpo de la respuesta.
 - Al crear un álbum, el ID de la banda debe coincidir con una banda existente, de lo contrario se producirá un error 422 (Unprocessable Entity).
 - El JSON enviado en el cuerpo del request debe contener los mismos campos que la entidad de álbum, excepto por su ID.
@@ -249,7 +257,7 @@ Los errores al crear un álbum pueden ser los siguientes:
 Es posible modificar un álbum existente mediante el endpoint  `PUT /albums/:id`
 
 Consideraciones:
-- Para modificar un álbum se debe poseer un token de autenticación, o se producirá un error 401 (Unauthorized).
+- Para modificar un álbum se debe poseer un token de autenticación (leer sección 'Autenticación y tokens'), o se producirá un error 401 (Unauthorized).
 - Si el álbum se modifica correctamente, se muestra un código 200 (OK) y un mensaje descriptivo en el cuerpo de la respuesta.
 - Al modificar un álbum, el nuevo ID de la banda debe coincidir con una banda existente, de lo contrario se producirá un error 422 (Unprocessable Entity).
 - El JSON enviado en el cuerpo del request debe contener los mismos campos que la entidad de álbum, excepto por su ID.
@@ -301,7 +309,7 @@ Es posible eliminar un álbum mediante el endpoint `DELETE /albums/:id`
 
 Consideraciones:
 - Si no se especifica el álbum a eliminar se produce un error 400 (Bad Request).
-- Para eliminar un álbum se debe poseer un token de autenticación válido, o se producirá un error 401 (Unauthorized).
+- Para eliminar un álbum se debe poseer un token de autenticación válido (leer sección 'Autenticación y tokens'), o se producirá un error 401 (Unauthorized).
 - Si el álbum se elimina correctamente se devuelve el código 200 (OK) y un mensaje descriptivo en el cuerpo de la respuesta.
 - Si el álbum especificado no existe se produce un error 404 (Not Found).
 
