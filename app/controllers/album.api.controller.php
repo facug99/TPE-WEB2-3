@@ -68,11 +68,8 @@ class AlbumAPIController extends APIController {
         // Paginación
         $queryParams += $this->handlePagination();
 
-        // Se genera la sentencia SQL a partir de los query parameters
-        $sql = $this->buildSqlQuery($queryParams);
-
         // Se obtienen los álbumes y se devuelven en formato JSON
-        $albums = $this->albumModel->getAlbums($sql, $queryParams['value']);
+        $albums = $this->albumModel->getAlbums($queryParams);
         return $this->view->response($albums, 200);
     }
 
