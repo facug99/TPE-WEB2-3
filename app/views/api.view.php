@@ -5,7 +5,7 @@ class APIView {
      * Establece header con el resultado de la operación y 
      * codifica la información en formato JSON
      */
-    public function response($data,$status = 200) {
+    public function response($data, $status = 200) {
         header('Content-Type: application/json');
         header('HTTP/1.1 ' . $status . ' ' . $this->_requestStatus($status));
         echo json_encode($data);

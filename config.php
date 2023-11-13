@@ -12,5 +12,7 @@ const DB_NAME = 'web2_tpe';
 const DB_CHARSET = 'utf8';
 const DB_USER = 'root';
 const DB_PASS = '';
+
+// Información de JWT
 const JWT_KEY = 'webadmin2023';
 const JWT_EXP = 3600;
