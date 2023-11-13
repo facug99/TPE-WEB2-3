@@ -9,7 +9,7 @@ La información de los álbumes, presentada en formato JSON, incluye:
 - ID de banda (`band_id`)
 
 **Ejemplo de presentación de un álbum:**
-```json
+```
 {
     "id": 12,
     "title": "Tanto Tango",
@@ -34,12 +34,12 @@ Los endpoints para obtener el listado de todos los álbumes y bandas son:
 - `GET /bands`
 
 **Ejemplo de request:**
-```url
+```
 GET localhost/web2/TPE-WEB2-3/api/albums
 ```
 
 **Response del ejemplo:**
-```json
+```
 [
     {
         "id": 1,
@@ -68,12 +68,12 @@ Consideraciones:
 
 
 **Ejemplo de request:**
-```url
+```
 GET localhost/web2/TPE-WEB2-3/api/albums?filter=title&value=sals
 ```
 
 **Response del ejemplo:**
-```json
+```
 [
     {
         "id": 5,
@@ -92,12 +92,12 @@ Consideraciones:
 - Los únicos valores admitidos para la clave `order` son "ASC" o "DESC", de lo contrario se producirá un error 400 (Bad Request).
 
 **Ejemplo de request:**
-```url
+```
 GET localhost/web2/TPE-WEB2-3/api/albums?sort=year&order=desc
 ```
 
 **Response del ejemplo:**
-```json
+```
 [
     {
         "id": 11,
@@ -128,12 +128,12 @@ Consideraciones:
 - Los valores ingresados tanto para `page` como para `limit` deben ser números enteros positivos, de lo contrario se producirá un error 400 (Bad Request).
 
 **Ejemplo de request:**
-```url
+```
 GET localhost/web2/TPE-WEB2-3/api/albums?page=2&limit=3
 ```
 
 **Response del ejemplo:**
-```json
+```
 [
     {
         "id": 4,
@@ -160,12 +160,12 @@ GET localhost/web2/TPE-WEB2-3/api/albums?page=2&limit=3
 Si un parámetro se escribe incorrectamente se produce un error 400 (Bad Request) junto con un mensaje descriptivo en el cuerpo de la respuesta.
 
 **Ejemplo de request:**
-```url
+```
 GET localhost/web2/TPE-WEB2-3/api/albums?filter=titleee&value=salsa
 ```
 
 **Response del ejemplo:**
-```json
+```
 "Invalid filter parameter (field 'titleee' does not exist)"
 ```
 
@@ -175,12 +175,12 @@ Los endpoints para obtener un álbum o banda con un ID específico son:
 - `GET /bands/:id`
 
 **Ejemplo de request:**
-```url
+```
 GET localhost/web2/TPE-WEB2-3/api/albums/12
 ```
 
 **Response del ejemplo:**
-```json
+```
 {
     "id": 12,
     "title": "Tanto Tango",
@@ -193,12 +193,12 @@ GET localhost/web2/TPE-WEB2-3/api/albums/12
 Si no se encuentra el álbum o banda con el ID especificado, se produce un error 404 (Not Found) junto con un mensaje descriptivo en el cuerpo de la respuesta.
 
 **Ejemplo de request:**
-```url
+```
 localhost/web2/TPE-WEB2-3/api/albums/1000
 ```
 
 **Response del ejemplo:**
-```json
+```
 "Album id=1000 not found"
 ```
 
@@ -212,10 +212,10 @@ Consideraciones:
 - El JSON enviado en el cuerpo del request debe contener los mismos campos que la entidad de álbum, excepto por su ID.
 
 **Ejemplo de request:**
-```url
+```
 POST localhost/web2/TPE-WEB2-3/api/albums
 ```
-```json
+```
 {
     "title": "Nuevo álbum",
     "year": 2000,
@@ -224,22 +224,22 @@ POST localhost/web2/TPE-WEB2-3/api/albums
 ```
 
 **Response del ejemplo:**
-```json
+```
 "Album id=17 successfully created"
 ```
 
 #### Errores
 Los errores al crear un álbum pueden ser los siguientes:
 - Error 401 (Unauthorized): Se produce cuando no se posee un token de autenticación válido.
-```json
+```
 "Unauthorized"
 ```
 
 - Error 422 (Unprocessable Entity): Se produce cuando el álbum no se puede crear exitosamente, ya sea porque la banda asignada no existe o por algún otro error en los valores del JSON enviado.
-```json
+```
 "Band id=1000 does not exist"
 ```
-```json
+```
 "Album id=20 could not be created"
 ```
 
@@ -253,10 +253,10 @@ Consideraciones:
 - El JSON enviado en el cuerpo del request debe contener los mismos campos que la entidad de álbum, excepto por su ID.
 
 **Ejemplo de request:**
-```url
+```
 PUT localhost/web2/TPE-WEB2-3/api/albums/17
 ```
-```json
+```
 {
     "title": "Nuevo álbum modificado",
     "year": 2004,
@@ -265,32 +265,32 @@ PUT localhost/web2/TPE-WEB2-3/api/albums/17
 ```
 
 **Response del ejemplo:**
-```json
+```
 "Album id=17 successfully modified"
 ```
 
 #### Errores
 Los errores al modificar un álbum pueden ser los siguientes:
 - **Error 400 (Bad Request)**: Se produce cuando no se especifica el ID del álbum a modificar.
-```json
+```
 "Album not specified"
 ```
 
 - **Error 401 (Unauthorized)**: Se produce cuando no se posee un token de autenticación válido.
-```json
+```
 "Unauthorized"
 ```
 
 - **Error 404 (Not Found)**: Se produce cuando el álbum a modificar no existe.
-```json
+```
 "Album id=523 does not exist"
 ```
 
 - **Error 422 (Unprocessable Entity)**: Se produce cuando el álbum no se pudo modificar exitosamente, ya sea porque la nueva banda asignada no existe o por algún otro error en los valores del JSON enviado.
-```json
+```
 "Band id=1000 does not exist"
 ```
-```json
+```
 "Album id=17 could not be modified"
 ```
 
@@ -304,29 +304,29 @@ Consideraciones:
 - Si el álbum especificado no existe se produce un error 404 (Not Found).
 
 **Ejemplo de request:**
-```url
+```
 DELETE localhost/web2/TPE-WEB2-3/api/albums/17
 ```
 
 **Response del ejemplo:**
-```json
+```
 "Album id=17 deleted"
 ```
 
 #### Errores
 Los errores al eliminar un álbum pueden ser los siguientes:
 - **Error 400 (Bad Request)**: Se produce cuando no se especifica el ID del álbum a eliminar.
-```json
+```
 "Album not specified"
 ```
 
 - **Error 401 (Unauthorized)**: Se produce cuando no se posee un token de autenticación válido.
-```json
+```
 "Unauthorized"
 ```
 
 - **Error 404 (Not Found)**: Se produce cuando el álbum a eliminar no existe.
-```json
+```
 "Album id=523 not found"
 ```
 
