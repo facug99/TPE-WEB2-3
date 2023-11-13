@@ -2,6 +2,8 @@
 ## Introducción
 Bienvenido a la documentación de la API REST de LocalSoundBA para gestionar álbumes de bandas. Esta API permite realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre la información de los álbumes.
 
+Si bien el servicio está orientado al acceso y manipulación de álbumes, es posible acceder a la base de datos de bandas (únicamente mediante el método HTTP GET), a fin de conocer el ID de una banda antes de asignarle un álbum creado o modificado.
+
 La información de los álbumes, presentada en formato JSON, incluye:
 - ID (`id`)
 - Título (`title`)
