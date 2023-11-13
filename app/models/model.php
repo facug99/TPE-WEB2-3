@@ -123,7 +123,7 @@ class Model {
             --
             
             INSERT INTO `users` (`id`, `username`, `password`, `exp`) VALUES
-            (1, 'webadmin', '$2y$10$sG.FqhVNVlwjWZkSmgE6O.YT7Dxm94JtfoRjRxZsjaXqpWhw/GDwS', 0);
+            (1, 'webadmin', '$2y$10\$sG.FqhVNVlwjWZkSmgE6O.YT7Dxm94JtfoRjRxZsjaXqpWhw/GDwS', 0);
             
             --
             -- Índices para tablas volcadas
@@ -175,8 +175,7 @@ class Model {
             /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
             /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
             /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-            
-                END;
+            END;
 
             $this->db->query($sql);
         }
