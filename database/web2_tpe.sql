@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 18-10-2023 a las 01:33:51
+-- Tiempo de generación: 13-11-2023 a las 18:15:55
 -- Versión del servidor: 10.4.28-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -90,15 +90,16 @@ INSERT INTO `bands` (`id`, `name`, `genre`, `formed_location`, `formed_year`) VA
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
   `username` varchar(100) NOT NULL,
-  `password` varchar(100) NOT NULL
+  `password` varchar(100) NOT NULL,
+  `exp` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `password`) VALUES
-(1, 'webadmin', '$2y$10$sG.FqhVNVlwjWZkSmgE6O.YT7Dxm94JtfoRjRxZsjaXqpWhw/GDwS');
+INSERT INTO `users` (`id`, `username`, `password`, `exp`) VALUES
+(1, 'webadmin', '$2y$10$sG.FqhVNVlwjWZkSmgE6O.YT7Dxm94JtfoRjRxZsjaXqpWhw/GDwS', 0);
 
 --
 -- Índices para tablas volcadas
@@ -132,7 +133,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT de la tabla `albums`
 --
 ALTER TABLE `albums`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
 
 --
 -- AUTO_INCREMENT de la tabla `bands`
