@@ -126,8 +126,11 @@ class AlbumAPIController extends APIController {
         }
 
         // Se modifica el álbum y se informa a la vista
-        $this->albumModel->editAlbum($id, $title, $year, $bandId);
-        $this->view->response("Album id=$id successfully modified", 200);
+        $modified = $this->albumModel->editAlbum($id, $title, $year, $bandId);
+        if ($modified)
+            $this->view->response("Album id=$id successfully modified", 200);
+        else
+            $this->view->response("Album id=$id could not be modified", 422);
     }
 
     /**
