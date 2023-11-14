@@ -152,7 +152,7 @@ GET [base_url]/api/albums?page=2&limit=3
 ```
 
 ##### Combinación de parámetros de consulta
-Es posible combinar los parámetros de filtrado, ordenamiento o paginación.
+Es posible combinar los parámetros de filtrado, ordenamiento y paginación.
 
 **Ejemplo:**
 ```
