@@ -20,13 +20,6 @@ La información de los álbumes, presentada en formato JSON, incluye:
 }
 ```
 
----
-
-## Base URL
-La URL base para acceder a la API es: `.../TPE-WEB2-3/api/`
-
----
-
 ## Recursos y operaciones CRUD
 
 ### 1. Obtener álbumes o bandas
@@ -37,7 +30,7 @@ Los endpoints para obtener el listado de todos los álbumes y bandas son:
 
 **Ejemplo de request:**
 ```
-GET localhost/web2/TPE-WEB2-3/api/albums
+GET [base_url]/api/albums
 ```
 
 **Response del ejemplo:**
@@ -71,7 +64,7 @@ Consideraciones:
 
 **Ejemplo de request:**
 ```
-GET localhost/web2/TPE-WEB2-3/api/albums?filter=title&value=sals
+GET [base_url]/api/albums?filter=title&value=sals
 ```
 
 **Response del ejemplo:**
@@ -95,7 +88,7 @@ Consideraciones:
 
 **Ejemplo de request:**
 ```
-GET localhost/web2/TPE-WEB2-3/api/albums?sort=year&order=desc
+GET [base_url]/api/albums?sort=year&order=desc
 ```
 
 **Response del ejemplo:**
@@ -131,7 +124,7 @@ Consideraciones:
 
 **Ejemplo de request:**
 ```
-GET localhost/web2/TPE-WEB2-3/api/albums?page=2&limit=3
+GET [base_url]/api/albums?page=2&limit=3
 ```
 
 **Response del ejemplo:**
@@ -163,7 +156,7 @@ Es posible combinar los parámetros de filtrado, ordenamiento o paginación.
 
 **Ejemplo:**
 ```
-GET localhost/web2/TPE-WEB2-3/api/albums?filter=title&value=rock&sort=year&order=desc&page=2&limit=5
+GET [base_url]/api/albums?filter=title&value=rock&sort=year&order=desc&page=2&limit=5
 ```
 
 ##### Errores de consulta
@@ -171,7 +164,7 @@ Si un parámetro se escribe incorrectamente se produce un error 400 (Bad Request
 
 **Ejemplo de request:**
 ```
-GET localhost/web2/TPE-WEB2-3/api/albums?filter=titleee&value=salsa
+GET [base_url]/api/albums?filter=titleee&value=salsa
 ```
 
 **Response del ejemplo:**
@@ -186,7 +179,7 @@ Los endpoints para obtener un álbum o banda con un ID específico son:
 
 **Ejemplo de request:**
 ```
-GET localhost/web2/TPE-WEB2-3/api/albums/12
+GET [base_url]/api/albums/12
 ```
 
 **Response del ejemplo:**
@@ -204,7 +197,7 @@ Si no se encuentra el álbum o banda con el ID especificado, se produce un error
 
 **Ejemplo de request:**
 ```
-localhost/web2/TPE-WEB2-3/api/albums/1000
+[base_url]/api/albums/1000
 ```
 
 **Response del ejemplo:**
@@ -223,7 +216,7 @@ Consideraciones:
 
 **Ejemplo de request:**
 ```
-POST localhost/web2/TPE-WEB2-3/api/albums
+POST [base_url]/api/albums
 ```
 ```
 {
@@ -264,7 +257,7 @@ Consideraciones:
 
 **Ejemplo de request:**
 ```
-PUT localhost/web2/TPE-WEB2-3/api/albums/17
+PUT [base_url]/api/albums/17
 ```
 ```
 {
@@ -315,7 +308,7 @@ Consideraciones:
 
 **Ejemplo de request:**
 ```
-DELETE localhost/web2/TPE-WEB2-3/api/albums/17
+DELETE [base_url]/api/albums/17
 ```
 
 **Response del ejemplo:**
