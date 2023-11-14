@@ -15,28 +15,15 @@ class BandModel extends Model {
     /**
      * Obtiene las bandas de la tabla 'bands'
      */
-    public function getBands($queryParams) {
-        $sql = "SELECT * FROM bands";
+    public function getBands($sql, $filterValue) {
+        $query = $this->db->prepare($sql);        
 
-        // Filtro
-        if (!empty($queryParams['filter']) && !empty($queryParams['value']))
-            $sql .= ' WHERE ' . $queryParams['filter'] . ' LIKE \'%' . $queryParams['value'] . '%\'';
-
-        // Ordenamiento
-        if (!empty($queryParams['sort'])) {
-            $sql .= ' ORDER BY '. $queryParams['sort'];
-
-            // Orden ascendente y descendente
-            if (!empty($queryParams['order']))
-                $sql .= ' ' . $queryParams['order'];
+        // Se sanitiza el valor del filtro (los otros datos fueron ya verificados por el controller)
+        if (!empty($filterValue)) {
+            $filterValue = '%' . $filterValue . '%';
+            $query->bindParam(':value', $filterValue, PDO::PARAM_STR);
         }
 
-        // Paginación
-        if (!empty($queryParams['limit']))
-            $sql .= ' LIMIT ' . $queryParams['limit'] . ' OFFSET ' . $queryParams['offset'];
-
-        // No hace falta sanitizar consulta (datos ingresados ya fueron verificados por el controlador)
-        $query = $this->db->prepare($sql);        
         $query->execute();
 
         $albums = $query->fetchAll(PDO::FETCH_OBJ);

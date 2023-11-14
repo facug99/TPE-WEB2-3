@@ -26,34 +26,13 @@ class AlbumModel extends Model {
     /**
      * Obtiene los álbumes de la tabla 'albums'
      */
-    public function getAlbums($queryParams) {
-        $sql = "SELECT * FROM albums";
-
-        // Filtro
-        if (!empty($queryParams['filter']) && !empty($queryParams['value']))
-            $sql .= ' WHERE ' . $queryParams['filter'] . ' LIKE :value';
-
-        // Ordenamiento
-        if (!empty($queryParams['sort'])) {
-            $sql .= ' ORDER BY '. $queryParams['sort'];
-
-            // Orden ascendente y descendente
-            if (!empty($queryParams['order']))
-                $sql .= ' ' . $queryParams['order'];
-        }
-
-        // Paginación
-        if (!empty($queryParams['limit']))
-            $sql .= ' LIMIT ' . $queryParams['limit'] . ' OFFSET ' . $queryParams['offset'];
-
-        
+    public function getAlbums($sql, $filterValue) {
         $query = $this->db->prepare($sql);        
 
-        // Se sanitiza el valor del filtro (queryParams['value']). 
-        // Los otros datos fueron verificados por el controller
-        if (!empty($queryParams['value'])) {
-            $value = '%' . $queryParams['value'] . '%';
-            $query->bindParam(':value', $value, PDO::PARAM_STR);
+        // Se sanitiza el valor del filtro (los otros datos fueron ya verificados por el controller)
+        if (!empty($filterValue)) {
+            $filterValue = '%' . $filterValue . '%';
+            $query->bindParam(':value', $filterValue, PDO::PARAM_STR);
         }
 
         $query->execute();

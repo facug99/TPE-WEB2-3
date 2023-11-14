@@ -111,4 +111,30 @@ abstract class APIController {
 
         return $paginationData;
     }
+
+    /**
+     * Construye una sentencia SQL con parámetros de consulta dados
+     */
+    protected function buildSqlQuery($table, $queryParams) {
+        $sql = "SELECT * FROM $table";
+
+        // Filtro
+        if (!empty($queryParams['filter']) && !empty($queryParams['value']))
+            $sql .= ' WHERE ' . $queryParams['filter'] . ' LIKE :value';
+
+        // Ordenamiento
+        if (!empty($queryParams['sort'])) {
+            $sql .= ' ORDER BY ' . $queryParams['sort'];
+
+            // Orden ascendente y descendente
+            if (!empty($queryParams['order']))
+                $sql .= ' ' . $queryParams['order'];
+        }
+
+        // Paginación
+        if (!empty($queryParams['limit']))
+            $sql .= ' LIMIT ' . $queryParams['limit'] . ' OFFSET ' . $queryParams['offset'];
+
+        return $sql;
+    }
 }

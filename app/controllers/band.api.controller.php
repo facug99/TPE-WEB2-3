@@ -30,8 +30,11 @@ class BandAPIController extends APIController {
         // Paginación
         $queryParams += $this->handlePagination();
 
+        // Generación de sentencia SQL a partir de parámetros de consulta
+        $sql = $this->buildSqlQuery("bands", $queryParams);
+
         // Se obtienen los álbumes y se devuelven en formato JSON
-        $bands = $this->bandModel->getBands($queryParams);
+        $bands = $this->bandModel->getBands($sql, $queryParams['value']);
         return $this->view->response($bands, 200);
     }
 
